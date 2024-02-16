@@ -2,7 +2,6 @@
 #define H_DUMB_TEST_OPERATOR
 
 #include <string_view>
-#include <dumb_test/string_literal.hpp>
 
 namespace dumb_test{
 	template<typename T>

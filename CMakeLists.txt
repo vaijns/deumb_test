@@ -7,4 +7,3 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 project(dumb_test)
 
 add_executable(dumb_test main.cpp)
-target_include_directories(dumb_test PRIVATE include/)

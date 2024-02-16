@@ -1,7 +1,7 @@
 #ifndef H_DUMB_TEST_TEST_RESULT
 #define H_DUMB_TEST_TEST_RESULT
 
-#include <dumb_test/string_literal.hpp>
+#include "string_literal.hpp"
 
 namespace dumb_test{
 	template<string_literal Name, typename TOperator, typename T>

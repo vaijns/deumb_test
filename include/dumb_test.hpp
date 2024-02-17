@@ -4,6 +4,7 @@
 #include <iostream>
 #include "dumb_test/string_literal.hpp"
 #include "dumb_test/test_result.hpp"
+#include "dumb_test/operator.hpp"
 
 namespace dumb_test{
 		namespace detail{
@@ -24,7 +25,7 @@ namespace dumb_test{
 			static constexpr std::size_t succeededAmount = ((Results.succeeded ? 1 : 0) + ...);
 			static_assert(failedAmount == 0, "there's failed tests.");
 
-			return true;
+			return failedAmount == 0;
 		}
 	}
 

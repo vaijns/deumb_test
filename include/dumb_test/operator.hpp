@@ -61,7 +61,7 @@ namespace dumb_test::static_operators{
 		static constexpr const char name[] = "<=";
 		template<typename T>
 		static constexpr bool operator()(T a, T b){
-			return a != b;
+			return a <= b;
 		}
 	};
 }

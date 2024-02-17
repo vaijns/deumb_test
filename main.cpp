@@ -4,7 +4,14 @@ int main(int argc, char* argv[]){
 	{
 		// runtime tests (print result)
 		using namespace dumb_test::operators;
-		static bool testResult = dumb_test::evaluate<"aha">(dumb_test::check<"nop">(2, equals, 1));
+		static bool testResultA = dumb_test::evaluate<"aha">(
+			dumb_test::check<"test a">(2, equals, 1),
+			dumb_test::check<"test b">(2, not_equals, 1),
+			dumb_test::check<"test c">(2, greater_than, 1),
+			dumb_test::check<"test d">(2, less_than, 1),
+			dumb_test::check<"test e">(2, greater_or_equals, 1),
+			dumb_test::check<"test f">(2, less_or_equals, 1)
+		);
 	}
 
 	{

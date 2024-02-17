@@ -3,18 +3,18 @@
 
 #include <iostream>
 #include "dumb_test/string_literal.hpp"
-#include "dumb_test/operator.hpp"
 #include "dumb_test/test_result.hpp"
 
 namespace dumb_test{
 		namespace detail{
 		template<string_literal Name, auto ValA, typename TOperator, decltype(ValA) ValB>
 		[[nodiscard]] static constexpr auto check(){
-			if constexpr(TOperator::template operator()<decltype(ValA)>(ValA, ValB)){
-				return test_result<Name, TOperator, decltype(ValA)>{ true, ValB, ValA };
-			} else{
-				return test_result<Name, TOperator, decltype(ValA)>{ false, ValB, ValA };
-			}
+			test_result<Name, TOperator, decltype(ValA)> result{};
+			result.succeeded = TOperator::template operator()<decltype(ValA)>(ValA, ValB);
+			result.expected_value = ValB;
+			result.actual_value = ValA;
+
+			return result;
 		}
 
 		template<string_literal CategoryName, auto... Results>
@@ -34,13 +34,14 @@ namespace dumb_test{
 	template<string_literal CategoryName, auto... Results>
 	static constexpr auto static_evaluate = detail::evaluate<CategoryName, Results...>();
 
-	template<string_literal Name>
+	template<string_literal Name = "">
 	[[nodiscard]] static constexpr auto check(auto a, auto op, decltype(a) b){
-		if(op(a, b)){
-			return test_result<Name, typename decltype(op)::type, decltype(a)>{ true, a, b };
-		} else{
-			return test_result<Name, typename decltype(op)::type, decltype(a)>{ false, a, b };
-		}
+		test_result<Name, typename decltype(op)::type, decltype(a)> result{};
+		result.succeeded = op(a, b);
+		result.expected_value = b;
+		result.actual_value = a;
+
+		return result;
 	}
 
 	template<string_literal CategoryName, typename... TResults>
@@ -49,9 +50,28 @@ namespace dumb_test{
 		std::size_t failedAmount = ((results.succeeded ? 0 : 1) + ...);
 		std::size_t succeededAmount = ((results.succeeded ? 1 : 0) + ...);
 
-		std::cout << "total tests: " << totalAmount << "\n";
-		std::cout << "failed tests: " << failedAmount << "\n";
-		std::cout << "succeeded tests: " << succeededAmount << "\n";
+		std::cout
+			<< "["
+			<< (failedAmount == 0 ? "PASSED: " : "FAILED: ")
+			<< CategoryName.value
+			<< "]\n";
+		std::cout << "total: " << totalAmount << "\n";
+		std::cout << "failed: " << failedAmount << "\n";
+		std::cout << "succeeded: " << succeededAmount << "\n";
+		std::cout << "----------\n";
+		([&](){
+			std::cout
+				<< (results.succeeded ? "PASSED: " : "FAILED: ")
+				<< results.name
+				<< " "
+				<< results.actual_value
+				<< " "
+				<< results.operator_name
+				<< " "
+				<< results.expected_value
+				<< "\n";
+		 }(), ...);
+		std::cout << "----------\n";
 
 		return failedAmount == 0;
 	}
